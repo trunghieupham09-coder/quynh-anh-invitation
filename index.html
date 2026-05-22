@@ -24,6 +24,7 @@
       --gold-light: #fde68a;
       --gold-soft:  #f59e0b;
       --cream:      #fffbeb;
+      --rose:       #fda4af;
     }
 
     html, body {
@@ -96,27 +97,29 @@
     }
 
     /* ============================================================
-       MÀN HÌNH
+       MÀN HÌNH (state machine: chỉ 1 .active một lúc)
        ============================================================ */
     .screen {
       position: fixed;
       inset: 0;
-      display: flex;
+      display: none;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       padding: 24px;
       z-index: 2;
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-    .screen.hidden {
       opacity: 0;
       transform: scale(0.92);
-      pointer-events: none;
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .screen.active {
+      display: flex;
+      opacity: 1;
+      transform: scale(1);
     }
 
     /* ============================================================
-       CÂU HỎI
+       CÂU HỎI / TIÊU ĐỀ TRANG
        ============================================================ */
     .question {
       color: var(--cream);
@@ -174,13 +177,13 @@
       border: none;
       border-radius: 50px;
       cursor: pointer;
-      transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s;
+      transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s, background 0.4s, color 0.4s;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
       letter-spacing: 0.4px;
     }
 
-    /* Nút "Có chứ" — gradient vàng gold, glow như sao, chữ navy đậm */
+    /* Nút "Yes" — gradient vàng gold, glow như sao, chữ navy đậm */
     .btn-yes {
       background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-soft) 100%);
       color: var(--navy-deep);
@@ -207,7 +210,7 @@
     .btn-yes:hover  { transform: scale(1.1) rotate(-2deg); }
     .btn-yes:active { transform: scale(0.96); }
 
-    /* Nút "Không" — navy tối, viền mờ, không nổi */
+    /* Nút "No" — navy tối, viền mờ, không nổi */
     .btn-no {
       background: linear-gradient(135deg, #2a335f 0%, #1a2348 100%);
       color: rgba(255, 255, 255, 0.65);
@@ -215,12 +218,29 @@
         0 4px 16px rgba(0, 0, 0, 0.35),
         inset 0 -2px 4px rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: top 0.25s ease, left 0.25s ease, transform 0.25s ease;
+      transition: top 0.25s ease, left 0.25s ease, transform 0.25s ease, background 0.4s, color 0.4s, box-shadow 0.4s;
     }
     .btn-no.escaping {
       position: fixed;
       z-index: 100;
     }
+    /* Trạng thái "settled" — chịu đứng yên, cho click */
+    .btn-no.settled {
+      background: linear-gradient(135deg, #3d4a7a 0%, #2a335f 100%);
+      color: var(--cream);
+      box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.4),
+        0 0 24px rgba(253, 230, 138, 0.18),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+      animation: settledWobble 1.6s ease-in-out infinite;
+    }
+    @keyframes settledWobble {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      25%      { transform: rotate(-2.5deg) scale(1.03); }
+      75%      { transform: rotate(2.5deg) scale(1.03); }
+    }
+    .btn-no.settled:hover  { animation-play-state: paused; transform: scale(1.08); }
+    .btn-no.settled:active { transform: scale(0.95); }
 
     /* ============================================================
        SUCCESS PAGE
@@ -281,12 +301,134 @@
       100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
     }
 
+    /* ============================================================
+       FINAL SAD PAGE — heart/teardrop rơi chậm, hơi buồn nhưng cute
+       ============================================================ */
+    .sad-text {
+      color: var(--cream);
+      font-size: clamp(1.4rem, 4vw, 2.6rem);
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.6;
+      letter-spacing: 0.3px;
+      max-width: 760px;
+      z-index: 10;
+      position: relative;
+      text-shadow:
+        0 0 20px rgba(253, 230, 138, 0.4),
+        0 0 40px rgba(253, 164, 175, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.6);
+      animation: sadFloat 5s ease-in-out infinite;
+    }
+    @keyframes sadFloat {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+    .sad-text .sub {
+      display: block;
+      font-size: 0.46em;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 500;
+      color: var(--gold-light);
+      margin-top: 24px;
+      letter-spacing: 3px;
+      opacity: 0.75;
+    }
+    .restart-link {
+      margin-top: 48px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
+      color: var(--gold-light);
+      opacity: 0.6;
+      cursor: pointer;
+      letter-spacing: 2px;
+      border-bottom: 1px solid rgba(253, 230, 138, 0.3);
+      padding-bottom: 4px;
+      transition: opacity 0.3s, color 0.3s;
+      z-index: 10;
+    }
+    .restart-link:hover { opacity: 1; color: var(--gold); }
+
+    .falling-heart {
+      position: fixed;
+      top: -60px;
+      pointer-events: none;
+      z-index: 5;
+      animation: fallSlow linear forwards;
+      filter: drop-shadow(0 0 8px rgba(253, 164, 175, 0.6));
+      user-select: none;
+    }
+    @keyframes fallSlow {
+      0%   { transform: translateY(0)    rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.85; }
+      90%  { opacity: 0.85; }
+      100% { transform: translateY(110vh) rotate(180deg); opacity: 0; }
+    }
+
+    /* ============================================================
+       CONFIRMATION PAGE — Em chắc chứ?
+       ============================================================ */
+    .confirm-text {
+      color: var(--cream);
+      font-size: clamp(1.85rem, 5.5vw, 3.8rem);
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.4;
+      max-width: 880px;
+      margin-bottom: 56px;
+      letter-spacing: 0.3px;
+      text-shadow:
+        0 0 22px rgba(253, 230, 138, 0.45),
+        0 0 50px rgba(251, 191, 36, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.6);
+      animation: floatText 4.5s ease-in-out infinite;
+    }
+    .confirm-text .hint {
+      display: block;
+      font-size: 0.4em;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 500;
+      color: var(--gold-light);
+      margin-top: 16px;
+      letter-spacing: 3px;
+      opacity: 0.7;
+    }
+
+    /* Nút "Em chắc" — kiểu muted, có vẻ chần chừ */
+    .btn-confirm-yes {
+      background: linear-gradient(135deg, #2a335f 0%, #1a2348 100%);
+      color: rgba(255, 255, 255, 0.78);
+      box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.4),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(253, 230, 138, 0.15);
+    }
+    .btn-confirm-yes:hover  { transform: scale(1.05); border-color: rgba(253, 230, 138, 0.35); }
+    .btn-confirm-yes:active { transform: scale(0.96); }
+
+    /* Nút "Em muốn chọn lại" — nổi bật gold, mời gọi quay lại */
+    .btn-reselect {
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-soft) 100%);
+      color: var(--navy-deep);
+      box-shadow:
+        0 8px 24px rgba(251, 191, 36, 0.4),
+        0 0 28px rgba(251, 191, 36, 0.22),
+        inset 0 -3px 6px rgba(180, 83, 9, 0.35);
+      animation: yesPulse 2.8s ease-in-out infinite;
+    }
+    .btn-reselect:hover  { transform: scale(1.08) rotate(-1.5deg); }
+    .btn-reselect:active { transform: scale(0.96); }
+
     /* Mobile */
     @media (max-width: 600px) {
-      .question        { margin-bottom: 44px; }
-      .button-container{ gap: 14px; }
-      .btn             { padding: 13px 32px; }
-      .moon            { top: 4%; right: 5%; }
+      .question, .confirm-text { margin-bottom: 44px; }
+      .button-container        { gap: 14px; }
+      .btn                     { padding: 13px 32px; }
+      .moon                    { top: 4%; right: 5%; }
+      .restart-link            { margin-top: 36px; }
     }
   </style>
 </head>
@@ -297,25 +439,58 @@
   <div class="moon">🌙</div>
 
   <!-- ======================== FRONT PAGE ======================== -->
-  <div class="screen" id="frontPage">
+  <div class="screen active" id="frontPage">
     <h1 class="question">
       Quynh Anh <span class="accent">,</span> Would you<br>
       go out with me this Saturday?
     </h1>
 
-    <div class="button-container">
+    <div class="button-container" id="frontButtons">
       <button class="btn btn-yes" id="btnYes">Yes ✨</button>
       <button class="btn btn-no"  id="btnNo">No 🙈</button>
     </div>
   </div>
 
   <!-- ======================== SUCCESS PAGE ======================== -->
-  <div class="screen hidden" id="successPage">
+  <div class="screen" id="successPage">
     <canvas id="fireworks"></canvas>
     <h1 class="success-text">
       多谢娘娘!<br>
       <span class="sub">✦ ✦ ✦</span>
     </h1>
+  </div>
+
+  <!-- ======================== CONFIRM PAGE 1 ======================== -->
+  <div class="screen" id="confirmPageOne">
+    <h1 class="confirm-text">
+      Em chắc chứ?
+      <span class="hint">✦ nghĩ kỹ lại nhé ✦</span>
+    </h1>
+    <div class="button-container">
+      <button class="btn btn-confirm-yes" id="btnSure1">Em chắc</button>
+      <button class="btn btn-reselect"    id="btnReselect1">Em muốn chọn lại ✨</button>
+    </div>
+  </div>
+
+  <!-- ======================== CONFIRM PAGE 2 ======================== -->
+  <div class="screen" id="confirmPageTwo">
+    <h1 class="confirm-text">
+      Em chắc chắc chắc chứ?
+      <span class="hint">✦ lần cuối thôi ✦</span>
+    </h1>
+    <div class="button-container">
+      <button class="btn btn-confirm-yes" id="btnSure2">Em chắc</button>
+      <button class="btn btn-reselect"    id="btnReselect2">Em muốn chọn lại ✨</button>
+    </div>
+  </div>
+
+  <!-- ======================== FINAL NO PAGE ======================== -->
+  <div class="screen" id="finalNoPage">
+    <h1 class="sad-text">
+      Dạ được rồi, anh sẽ đợi cơ hội lần sau 🥹
+      <span class="sub">✦ ✦ ✦</span>
+    </h1>
+    <div class="restart-link" id="restartLink">quay lại từ đầu</div>
   </div>
 
   <script>
@@ -332,13 +507,11 @@
         const r    = Math.random();
 
         if (r < 0.75) {
-          // Sao chấm nhỏ
           star.className    = 'star star-dot';
           const size        = Math.random() * 2.2 + 1.2;
           star.style.width  = size + 'px';
           star.style.height = size + 'px';
         } else {
-          // Sao 5 cánh to
           star.className    = 'star star-shape';
           const size        = Math.random() * 10 + 7;
           star.style.width  = size + 'px';
@@ -355,23 +528,39 @@
     generateStarfield();
 
     /* ============================================================
-       2. CHUYỂN MÀN HÌNH KHI BẤM "CÓ CHỨ"
+       2. STATE MACHINE — quản lý các màn hình
        ============================================================ */
-    const frontPage   = document.getElementById('frontPage');
-    const successPage = document.getElementById('successPage');
-    const btnYes      = document.getElementById('btnYes');
-    const btnNo       = document.getElementById('btnNo');
+    const pages = {
+      front:      document.getElementById('frontPage'),
+      success:    document.getElementById('successPage'),
+      confirmOne: document.getElementById('confirmPageOne'),
+      confirmTwo: document.getElementById('confirmPageTwo'),
+      finalNo:    document.getElementById('finalNoPage'),
+    };
+    function showPage(name) {
+      Object.values(pages).forEach(p => p.classList.remove('active'));
+      pages[name].classList.add('active');
+    }
+
+    /* ============================================================
+       3. NÚT YES → TRANG SUCCESS
+       ============================================================ */
+    const btnYes = document.getElementById('btnYes');
+    const btnNo  = document.getElementById('btnNo');
 
     btnYes.addEventListener('click', () => {
-      frontPage.classList.add('hidden');
-      successPage.classList.remove('hidden');
+      showPage('success');
       startFireworks();
       startFallingStars();
     });
 
     /* ============================================================
-       3. LOGIC NÉ NÚT "KHÔNG"
+       4. LOGIC NÉ NÚT "NO" — 2 lần né, lần 3 đứng yên cho click
        ============================================================ */
+    let noHoverCount      = 0;       // đếm số lần hover trước
+    let noButtonClickable = false;   // sau 2 lần né thì cho click
+    let lastEscapePos     = null;    // {x, y} của vị trí cũ để check distance
+
     const reactions = ['😝', '🙈', '🫣', '😏', '🤭', '😜', '🤪', '😶‍🌫️'];
 
     function getMinDistance() {
@@ -380,13 +569,13 @@
       return Math.max(baseline, vp * 0.15);
     }
 
-    function escapeNoButton() {
-      const rect = btnNo.getBoundingClientRect();
-      const oldCX = rect.left + rect.width  / 2;
-      const oldCY = rect.top  + rect.height / 2;
-      const btnW   = rect.width;
-      const btnH   = rect.height;
-      const margin = 24;
+    function moveNoButtonRandomly() {
+      const rect    = btnNo.getBoundingClientRect();
+      const oldCX   = lastEscapePos ? lastEscapePos.x : rect.left + rect.width  / 2;
+      const oldCY   = lastEscapePos ? lastEscapePos.y : rect.top  + rect.height / 2;
+      const btnW    = rect.width;
+      const btnH    = rect.height;
+      const margin  = 24;
       const minDist = getMinDistance();
 
       let newX, newY, distance, attempts = 0;
@@ -395,9 +584,10 @@
         newY = margin + Math.random() * Math.max(1, window.innerHeight - btnH - margin * 2);
         const cx = newX + btnW / 2;
         const cy = newY + btnH / 2;
+        // distance = Math.sqrt((newX - oldX)**2 + (newY - oldY)**2) — chỉ accept nếu >= 190
         distance = Math.hypot(cx - oldCX, cy - oldCY);
         attempts++;
-      } while (distance < minDist && attempts < 30);
+      } while (distance < minDist && attempts < 40);
 
       btnNo.classList.add('escaping');
       btnNo.style.left = newX + 'px';
@@ -405,37 +595,89 @@
       const rot   = (Math.random() - 0.5) * 26;
       const scale = 0.92 + Math.random() * 0.16;
       btnNo.style.transform = `rotate(${rot}deg) scale(${scale})`;
-      btnNo.textContent = 'Không ' + reactions[Math.floor(Math.random() * reactions.length)];
+      btnNo.textContent = 'No ' + reactions[Math.floor(Math.random() * reactions.length)];
+
+      lastEscapePos = { x: newX + btnW / 2, y: newY + btnH / 2 };
     }
 
-    // Desktop
-    btnNo.addEventListener('mouseenter', escapeNoButton);
-    btnNo.addEventListener('mouseover',  escapeNoButton);
-    // Mobile / touch
-    btnNo.addEventListener('touchstart',   (e) => { e.preventDefault(); escapeNoButton(); }, { passive: false });
-    btnNo.addEventListener('pointerenter', escapeNoButton);
-    btnNo.addEventListener('pointerdown',  (e) => { e.preventDefault(); escapeNoButton(); });
-    btnNo.addEventListener('click',        (e) => { e.preventDefault(); e.stopPropagation(); escapeNoButton(); });
+    function makeNoButtonSettled() {
+      noButtonClickable = true;
+      btnNo.classList.add('settled');
+      // clear inline transform để CSS animation tiếp quản
+      btnNo.style.transform = '';
+      btnNo.textContent = 'Thật luôn? 🥺';
+    }
 
-    // Né khi chuột chỉ tới gần (proximity), có throttle
+    function handleNoHover() {
+      // Chỉ tác dụng khi đang ở front page và chưa settled
+      if (!pages.front.classList.contains('active')) return;
+      if (noButtonClickable) return;
+
+      if (noHoverCount < 2) {
+        noHoverCount++;
+        moveNoButtonRandomly();
+        // Đến lần thứ 2 đã né xong → từ lần hover kế tiếp (lần 3) sẽ vào settle path
+      } else {
+        // lần thứ 3+ trở đi (theo logic đếm: count=2 nghĩa là đã né đủ 2 lần)
+        makeNoButtonSettled();
+      }
+    }
+
+    function handleNoClick(e) {
+      // Trong giai đoạn né: chặn click hoàn toàn
+      if (!noButtonClickable) {
+        e.preventDefault();
+        e.stopPropagation();
+        // Nếu chuột chạm trúng mà chưa đủ 2 lần né → coi như một lần né
+        if (noHoverCount < 2) {
+          noHoverCount++;
+          moveNoButtonRandomly();
+        } else {
+          makeNoButtonSettled();
+        }
+        return;
+      }
+      // Đã clickable: vào trang xác nhận lần 1
+      showPage('confirmOne');
+    }
+
+    // Desktop hover
+    btnNo.addEventListener('mouseenter', handleNoHover);
+    // Mobile / touch — hover không tồn tại nên dùng touchstart + pointerenter
+    btnNo.addEventListener('pointerenter', handleNoHover);
+    btnNo.addEventListener('touchstart', (e) => {
+      if (!noButtonClickable) {
+        e.preventDefault();
+        handleNoHover();
+      }
+    }, { passive: false });
+
+    // Click handler
+    btnNo.addEventListener('click', handleNoClick);
+
+    // Proximity escape (chỉ chạy khi chưa settled)
     let proximityThrottle = 0;
     document.addEventListener('mousemove', (e) => {
-      if (frontPage.classList.contains('hidden')) return;
+      if (!pages.front.classList.contains('active')) return;
+      if (noButtonClickable) return;
       const now = Date.now();
       if (now - proximityThrottle < 60) return;
       proximityThrottle = now;
       const r  = btnNo.getBoundingClientRect();
       const cx = r.left + r.width  / 2;
       const cy = r.top  + r.height / 2;
-      if (Math.hypot(e.clientX - cx, e.clientY - cy) < 90) escapeNoButton();
+      if (Math.hypot(e.clientX - cx, e.clientY - cy) < 80) {
+        handleNoHover();
+      }
     });
 
-    // Resize → kéo nút No về trong viewport
+    // Resize → kéo nút No về trong viewport (chỉ khi đang escaping)
     window.addEventListener('resize', () => {
       if (!btnNo.classList.contains('escaping')) return;
       const r = btnNo.getBoundingClientRect();
       let x = parseFloat(btnNo.style.left);
       let y = parseFloat(btnNo.style.top);
+      if (isNaN(x) || isNaN(y)) return;
       x = Math.min(Math.max(20, x), window.innerWidth  - r.width  - 20);
       y = Math.min(Math.max(20, y), window.innerHeight - r.height - 20);
       btnNo.style.left = x + 'px';
@@ -443,9 +685,47 @@
     });
 
     /* ============================================================
-       4. PHÁO HOA SÁNG — Rocket bay lên → nổ ra burst
-          Additive blending (lighter) cho hiệu ứng glow rực
-          Clear canvas mỗi frame để background sao luôn hiện
+       5. RESET — quay về front page với button No nguyên vẹn
+       ============================================================ */
+    function resetNoButton() {
+      noHoverCount      = 0;
+      noButtonClickable = false;
+      lastEscapePos     = null;
+      btnNo.classList.remove('escaping', 'settled');
+      btnNo.style.position  = '';
+      btnNo.style.left      = '';
+      btnNo.style.top       = '';
+      btnNo.style.transform = '';
+      btnNo.textContent     = 'No 🙈';
+    }
+
+    function resetToFrontPage() {
+      resetNoButton();
+      showPage('front');
+    }
+
+    /* ============================================================
+       6. NÚT TRÊN CÁC TRANG XÁC NHẬN
+       ============================================================ */
+    document.getElementById('btnReselect1').addEventListener('click', resetToFrontPage);
+    document.getElementById('btnReselect2').addEventListener('click', resetToFrontPage);
+
+    document.getElementById('btnSure1').addEventListener('click', () => {
+      showPage('confirmTwo');
+    });
+
+    document.getElementById('btnSure2').addEventListener('click', () => {
+      showPage('finalNo');
+      startFallingHearts();
+    });
+
+    document.getElementById('restartLink').addEventListener('click', () => {
+      stopFallingHearts();
+      resetToFrontPage();
+    });
+
+    /* ============================================================
+       7. PHÁO HOA SÁNG (success page) — giữ nguyên
        ============================================================ */
     const canvas = document.getElementById('fireworks');
     const ctx    = canvas.getContext('2d');
@@ -460,15 +740,14 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // [core sáng, body, accent] — chủ đạo gold/warm
     const FW_PALETTES = [
-      ['#ffffff', '#fde68a', '#fbbf24'], // bright gold
-      ['#fff7c4', '#fbbf24', '#f59e0b'], // amber
-      ['#ffffff', '#fcd34d', '#f59e0b'], // honey gold
-      ['#ffffff', '#ffe57e', '#ffb74d'], // warm sunset
-      ['#fffacd', '#ffd700', '#daa520'], // royal gold
-      ['#fff5f5', '#fda4af', '#fb7185'], // rose (hiếm)
-      ['#f0f9ff', '#a5f3fc', '#67e8f9'], // ice blue (hiếm)
+      ['#ffffff', '#fde68a', '#fbbf24'],
+      ['#fff7c4', '#fbbf24', '#f59e0b'],
+      ['#ffffff', '#fcd34d', '#f59e0b'],
+      ['#ffffff', '#ffe57e', '#ffb74d'],
+      ['#fffacd', '#ffd700', '#daa520'],
+      ['#fff5f5', '#fda4af', '#fb7185'],
+      ['#f0f9ff', '#a5f3fc', '#67e8f9'],
     ];
 
     class Rocket {
@@ -478,7 +757,6 @@
         this.targetY = canvas.height * (0.12 + Math.random() * 0.35);
         this.vy = -(Math.random() * 3 + 8);
         this.vx = (Math.random() - 0.5) * 1.4;
-        // 85% gold, 15% accent khác
         const idx = Math.random() < 0.85
                     ? Math.floor(Math.random() * 5)
                     : 5 + Math.floor(Math.random() * 2);
@@ -489,7 +767,7 @@
       update() {
         this.x += this.vx;
         this.y += this.vy;
-        this.vy += 0.12; // gravity
+        this.vy += 0.12;
         this.trail.push({ x: this.x, y: this.y, life: 1 });
         if (this.trail.length > 14) this.trail.shift();
         this.trail.forEach(t => t.life -= 0.075);
@@ -512,7 +790,6 @@
             i % 6 === 0 ? core : body
           ));
         }
-        // Twinkle stragglers — bay xa, nhấp nháy
         for (let i = 0; i < 14; i++) {
           const angle = Math.random() * Math.PI * 2;
           const speed = Math.random() * 7 + 4;
@@ -531,7 +808,6 @@
       draw() {
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
-        // Trail
         for (const t of this.trail) {
           if (t.life <= 0) continue;
           ctx.globalAlpha = t.life * 0.7;
@@ -542,7 +818,6 @@
           ctx.arc(t.x, t.y, 1.8, 0, Math.PI * 2);
           ctx.fill();
         }
-        // Đầu rocket
         ctx.globalAlpha = 1;
         ctx.fillStyle   = this.palette[0];
         ctx.shadowBlur  = 18;
@@ -567,7 +842,7 @@
       update() {
         this.x += this.vx;
         this.y += this.vy;
-        this.vy += 0.05; // gravity
+        this.vy += 0.05;
         this.vx *= 0.985;
         this.vy *= 0.985;
         this.life -= this.decay;
@@ -593,7 +868,6 @@
 
     function animateFireworks() {
       if (!fireworksRunning) return;
-      // Clear hoàn toàn để background sao luôn nhìn thấy
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       rockets.forEach(r => { r.update(); r.draw(); });
@@ -619,9 +893,10 @@
     }
 
     /* ============================================================
-       5. SAO VÀNG RƠI XUỐNG LIÊN TỤC
+       8. SAO VÀNG RƠI (success page)
        ============================================================ */
     const STAR_EMOJIS = ['⭐', '🌟', '✨', '💫', '⭐', '🌟', '✨'];
+    const successPage = document.getElementById('successPage');
 
     function spawnFallingStar() {
       const star = document.createElement('div');
@@ -629,7 +904,7 @@
       star.textContent = STAR_EMOJIS[Math.floor(Math.random() * STAR_EMOJIS.length)];
       star.style.left              = Math.random() * 100 + 'vw';
       star.style.fontSize          = (Math.random() * 1.8 + 1.2) + 'rem';
-      const duration               = Math.random() * 4 + 5; // 5–9s
+      const duration               = Math.random() * 4 + 5;
       star.style.animationDuration = duration + 's';
       successPage.appendChild(star);
       setTimeout(() => star.remove(), duration * 1000 + 300);
@@ -638,6 +913,39 @@
     function startFallingStars() {
       for (let i = 0; i < 18; i++) setTimeout(spawnFallingStar, i * 130);
       setInterval(spawnFallingStar, 280);
+    }
+
+    /* ============================================================
+       9. HEART RƠI CHẬM (final sad page) — buồn nhưng cute
+       ============================================================ */
+    const HEART_EMOJIS = ['🥺', '🤍', '💛', '🌙', '🥹', '✨'];
+    const finalNoPage = document.getElementById('finalNoPage');
+    let fallingHeartInterval = null;
+
+    function spawnFallingHeart() {
+      const h = document.createElement('div');
+      h.className   = 'falling-heart';
+      h.textContent = HEART_EMOJIS[Math.floor(Math.random() * HEART_EMOJIS.length)];
+      h.style.left              = Math.random() * 100 + 'vw';
+      h.style.fontSize          = (Math.random() * 1.4 + 1.1) + 'rem';
+      const duration            = Math.random() * 4 + 8; // 8-12s, chậm hơn sao
+      h.style.animationDuration = duration + 's';
+      finalNoPage.appendChild(h);
+      setTimeout(() => h.remove(), duration * 1000 + 300);
+    }
+
+    function startFallingHearts() {
+      stopFallingHearts();
+      for (let i = 0; i < 8; i++) setTimeout(spawnFallingHeart, i * 350);
+      fallingHeartInterval = setInterval(spawnFallingHeart, 700);
+    }
+
+    function stopFallingHearts() {
+      if (fallingHeartInterval) {
+        clearInterval(fallingHeartInterval);
+        fallingHeartInterval = null;
+      }
+      finalNoPage.querySelectorAll('.falling-heart').forEach(h => h.remove());
     }
   </script>
 </body>
