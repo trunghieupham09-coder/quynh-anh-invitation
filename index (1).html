@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quỳnh Anh ơi... 🌙</title>
+
+  <!-- Baloo 2 cho tiếng Việt cute, Cormorant Garamond italic cho accent elegant -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       BIẾN MÀU & RESET
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy-deep:  #060a1f;
+      --navy:       #0d1431;
+      --navy-soft:  #1a2348;
+      --gold:       #fbbf24;
+      --gold-light: #fde68a;
+      --gold-soft:  #f59e0b;
+      --cream:      #fffbeb;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: 'Baloo 2', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      color: var(--cream);
+    }
+
+    /* ============================================================
+       NỀN ĐÊM NAVY — gradient radial, đậm dần ra rìa
+       ============================================================ */
+    body {
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, var(--navy-soft) 0%, transparent 60%),
+        radial-gradient(ellipse at center,          var(--navy) 0%, var(--navy-deep) 100%);
+      position: relative;
+    }
+
+    /* ============================================================
+       BACKGROUND STARFIELD — sao vàng tĩnh, twinkle nhẹ
+       ============================================================ */
+    .starfield {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      animation: twinkle ease-in-out infinite;
+    }
+    /* Sao chấm tròn nhỏ — đa số */
+    .star-dot {
+      background: var(--gold);
+      border-radius: 50%;
+      box-shadow:
+        0 0 4px rgba(251, 191, 36, 0.9),
+        0 0 8px rgba(251, 191, 36, 0.4);
+    }
+    /* Sao 5 cánh to — giống các ngôi sao to trong ảnh */
+    .star-shape {
+      background: var(--gold);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.7));
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.25; transform: scale(0.85); }
+      50%      { opacity: 1;    transform: scale(1.05); }
+    }
+
+    /* Trăng lưỡi liềm trang trí — góc trên phải */
+    .moon {
+      position: fixed;
+      top: 5%;
+      right: 7%;
+      font-size: clamp(2.3rem, 5vw, 3.8rem);
+      filter: drop-shadow(0 0 22px rgba(253, 230, 138, 0.7));
+      animation: moonFloat 7s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+    @keyframes moonFloat {
+      0%, 100% { transform: translateY(0)    rotate(-6deg); }
+      50%      { transform: translateY(-14px) rotate(6deg); }
+    }
+
+    /* ============================================================
+       MÀN HÌNH
+       ============================================================ */
+    .screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      z-index: 2;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .screen.hidden {
+      opacity: 0;
+      transform: scale(0.92);
+      pointer-events: none;
+    }
+
+    /* ============================================================
+       CÂU HỎI
+       ============================================================ */
+    .question {
+      color: var(--cream);
+      font-size: clamp(1.75rem, 5vw, 3.5rem);
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.4;
+      max-width: 920px;
+      margin-bottom: 56px;
+      letter-spacing: 0.3px;
+      text-shadow:
+        0 0 20px rgba(253, 230, 138, 0.5),
+        0 0 45px rgba(251, 191, 36, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.6);
+      animation: floatText 4s ease-in-out infinite;
+    }
+    @keyframes floatText {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-10px); }
+    }
+    .question .accent {
+      color: var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+    .question .sub {
+      display: block;
+      font-size: 0.42em;
+      font-weight: 500;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--gold-light);
+      margin-top: 18px;
+      letter-spacing: 4px;
+      opacity: 0.85;
+    }
+
+    /* ============================================================
+       NÚT
+       ============================================================ */
+    .button-container {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      font-family: inherit;
+      font-size: clamp(1.05rem, 2.5vw, 1.5rem);
+      font-weight: 700;
+      padding: 16px 42px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      letter-spacing: 0.4px;
+    }
+
+    /* Nút "Có chứ" — gradient vàng gold, glow như sao, chữ navy đậm */
+    .btn-yes {
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-soft) 100%);
+      color: var(--navy-deep);
+      box-shadow:
+        0 8px 24px rgba(251, 191, 36, 0.45),
+        0 0 30px rgba(251, 191, 36, 0.25),
+        inset 0 -3px 6px rgba(180, 83, 9, 0.35);
+      animation: yesPulse 2.8s ease-in-out infinite;
+    }
+    @keyframes yesPulse {
+      0%, 100% {
+        box-shadow:
+          0 8px 24px rgba(251, 191, 36, 0.4),
+          0 0 30px rgba(251, 191, 36, 0.25),
+          inset 0 -3px 6px rgba(180, 83, 9, 0.35);
+      }
+      50% {
+        box-shadow:
+          0 8px 30px rgba(251, 191, 36, 0.7),
+          0 0 55px rgba(251, 191, 36, 0.5),
+          inset 0 -3px 6px rgba(180, 83, 9, 0.35);
+      }
+    }
+    .btn-yes:hover  { transform: scale(1.1) rotate(-2deg); }
+    .btn-yes:active { transform: scale(0.96); }
+
+    /* Nút "Không" — navy tối, viền mờ, không nổi */
+    .btn-no {
+      background: linear-gradient(135deg, #2a335f 0%, #1a2348 100%);
+      color: rgba(255, 255, 255, 0.65);
+      box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.35),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: top 0.25s ease, left 0.25s ease, transform 0.25s ease;
+    }
+    .btn-no.escaping {
+      position: fixed;
+      z-index: 100;
+    }
+
+    /* ============================================================
+       SUCCESS PAGE
+       ============================================================ */
+    #fireworks {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .success-text {
+      color: var(--cream);
+      font-size: clamp(2rem, 6vw, 4.4rem);
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.3;
+      letter-spacing: 0.5px;
+      z-index: 10;
+      position: relative;
+      text-shadow:
+        0 0 30px rgba(253, 230, 138, 0.7),
+        0 0 65px rgba(251, 191, 36, 0.45),
+        0 2px 10px rgba(0, 0, 0, 0.6);
+      animation: successBounce 2.2s ease-in-out infinite;
+    }
+    @keyframes successBounce {
+      0%, 100% { transform: scale(1)    translateY(0); }
+      50%      { transform: scale(1.05) translateY(-12px); }
+    }
+    .success-text .sub {
+      display: block;
+      font-size: 0.36em;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 500;
+      color: var(--gold-light);
+      margin-top: 22px;
+      letter-spacing: 6px;
+      opacity: 0.9;
+    }
+
+    /* Sao vàng rơi xuống, glow mạnh */
+    .falling-star {
+      position: fixed;
+      top: -60px;
+      pointer-events: none;
+      z-index: 5;
+      animation: fall linear forwards;
+      filter:
+        drop-shadow(0 0 10px rgba(251, 191, 36, 0.95))
+        drop-shadow(0 0 22px rgba(251, 191, 36, 0.55));
+      user-select: none;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(0)    rotate(0deg);   opacity: 0; }
+      8%   { opacity: 1; }
+      92%  { opacity: 1; }
+      100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      .question        { margin-bottom: 44px; }
+      .button-container{ gap: 14px; }
+      .btn             { padding: 13px 32px; }
+      .moon            { top: 4%; right: 5%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background starfield + trăng -->
+  <div class="starfield" id="starfield"></div>
+  <div class="moon">🌙</div>
+
+  <!-- ======================== FRONT PAGE ======================== -->
+  <div class="screen" id="frontPage">
+    <h1 class="question">
+      Quynh Anh <span class="accent">,</span> Would you<br>
+      go out with me this Saturday?
+    </h1>
+
+    <div class="button-container">
+      <button class="btn btn-yes" id="btnYes">Yes ✨</button>
+      <button class="btn btn-no"  id="btnNo">No 🙈</button>
+    </div>
+  </div>
+
+  <!-- ======================== SUCCESS PAGE ======================== -->
+  <div class="screen hidden" id="successPage">
+    <canvas id="fireworks"></canvas>
+    <h1 class="success-text">
+      多谢娘娘!<br>
+      <span class="sub">✦ ✦ ✦</span>
+    </h1>
+  </div>
+
+  <script>
+    /* ============================================================
+       1. SINH SAO BACKGROUND BẰNG JS
+       ============================================================ */
+    function generateStarfield() {
+      const starfield = document.getElementById('starfield');
+      const isMobile  = window.innerWidth < 600;
+      const count     = isMobile ? 100 : 160;
+
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        const r    = Math.random();
+
+        if (r < 0.75) {
+          // Sao chấm nhỏ
+          star.className    = 'star star-dot';
+          const size        = Math.random() * 2.2 + 1.2;
+          star.style.width  = size + 'px';
+          star.style.height = size + 'px';
+        } else {
+          // Sao 5 cánh to
+          star.className    = 'star star-shape';
+          const size        = Math.random() * 10 + 7;
+          star.style.width  = size + 'px';
+          star.style.height = size + 'px';
+        }
+
+        star.style.left              = Math.random() * 100 + 'vw';
+        star.style.top               = Math.random() * 100 + 'vh';
+        star.style.animationDelay    = (Math.random() * 5) + 's';
+        star.style.animationDuration = (2.5 + Math.random() * 3.5) + 's';
+        starfield.appendChild(star);
+      }
+    }
+    generateStarfield();
+
+    /* ============================================================
+       2. CHUYỂN MÀN HÌNH KHI BẤM "CÓ CHỨ"
+       ============================================================ */
+    const frontPage   = document.getElementById('frontPage');
+    const successPage = document.getElementById('successPage');
+    const btnYes      = document.getElementById('btnYes');
+    const btnNo       = document.getElementById('btnNo');
+
+    btnYes.addEventListener('click', () => {
+      frontPage.classList.add('hidden');
+      successPage.classList.remove('hidden');
+      startFireworks();
+      startFallingStars();
+    });
+
+    /* ============================================================
+       3. LOGIC NÉ NÚT "KHÔNG"
+       ============================================================ */
+    const reactions = ['😝', '🙈', '🫣', '😏', '🤭', '😜', '🤪', '😶‍🌫️'];
+
+    function getMinDistance() {
+      const baseline = 190; // ~5cm @ 96 DPI
+      const vp       = Math.min(window.innerWidth, window.innerHeight);
+      return Math.max(baseline, vp * 0.15);
+    }
+
+    function escapeNoButton() {
+      const rect = btnNo.getBoundingClientRect();
+      const oldCX = rect.left + rect.width  / 2;
+      const oldCY = rect.top  + rect.height / 2;
+      const btnW   = rect.width;
+      const btnH   = rect.height;
+      const margin = 24;
+      const minDist = getMinDistance();
+
+      let newX, newY, distance, attempts = 0;
+      do {
+        newX = margin + Math.random() * Math.max(1, window.innerWidth  - btnW - margin * 2);
+        newY = margin + Math.random() * Math.max(1, window.innerHeight - btnH - margin * 2);
+        const cx = newX + btnW / 2;
+        const cy = newY + btnH / 2;
+        distance = Math.hypot(cx - oldCX, cy - oldCY);
+        attempts++;
+      } while (distance < minDist && attempts < 30);
+
+      btnNo.classList.add('escaping');
+      btnNo.style.left = newX + 'px';
+      btnNo.style.top  = newY + 'px';
+      const rot   = (Math.random() - 0.5) * 26;
+      const scale = 0.92 + Math.random() * 0.16;
+      btnNo.style.transform = `rotate(${rot}deg) scale(${scale})`;
+      btnNo.textContent = 'Không ' + reactions[Math.floor(Math.random() * reactions.length)];
+    }
+
+    // Desktop
+    btnNo.addEventListener('mouseenter', escapeNoButton);
+    btnNo.addEventListener('mouseover',  escapeNoButton);
+    // Mobile / touch
+    btnNo.addEventListener('touchstart',   (e) => { e.preventDefault(); escapeNoButton(); }, { passive: false });
+    btnNo.addEventListener('pointerenter', escapeNoButton);
+    btnNo.addEventListener('pointerdown',  (e) => { e.preventDefault(); escapeNoButton(); });
+    btnNo.addEventListener('click',        (e) => { e.preventDefault(); e.stopPropagation(); escapeNoButton(); });
+
+    // Né khi chuột chỉ tới gần (proximity), có throttle
+    let proximityThrottle = 0;
+    document.addEventListener('mousemove', (e) => {
+      if (frontPage.classList.contains('hidden')) return;
+      const now = Date.now();
+      if (now - proximityThrottle < 60) return;
+      proximityThrottle = now;
+      const r  = btnNo.getBoundingClientRect();
+      const cx = r.left + r.width  / 2;
+      const cy = r.top  + r.height / 2;
+      if (Math.hypot(e.clientX - cx, e.clientY - cy) < 90) escapeNoButton();
+    });
+
+    // Resize → kéo nút No về trong viewport
+    window.addEventListener('resize', () => {
+      if (!btnNo.classList.contains('escaping')) return;
+      const r = btnNo.getBoundingClientRect();
+      let x = parseFloat(btnNo.style.left);
+      let y = parseFloat(btnNo.style.top);
+      x = Math.min(Math.max(20, x), window.innerWidth  - r.width  - 20);
+      y = Math.min(Math.max(20, y), window.innerHeight - r.height - 20);
+      btnNo.style.left = x + 'px';
+      btnNo.style.top  = y + 'px';
+    });
+
+    /* ============================================================
+       4. PHÁO HOA SÁNG — Rocket bay lên → nổ ra burst
+          Additive blending (lighter) cho hiệu ứng glow rực
+          Clear canvas mỗi frame để background sao luôn hiện
+       ============================================================ */
+    const canvas = document.getElementById('fireworks');
+    const ctx    = canvas.getContext('2d');
+    let rockets   = [];
+    let particles = [];
+    let fireworksRunning = false;
+
+    function resizeCanvas() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // [core sáng, body, accent] — chủ đạo gold/warm
+    const FW_PALETTES = [
+      ['#ffffff', '#fde68a', '#fbbf24'], // bright gold
+      ['#fff7c4', '#fbbf24', '#f59e0b'], // amber
+      ['#ffffff', '#fcd34d', '#f59e0b'], // honey gold
+      ['#ffffff', '#ffe57e', '#ffb74d'], // warm sunset
+      ['#fffacd', '#ffd700', '#daa520'], // royal gold
+      ['#fff5f5', '#fda4af', '#fb7185'], // rose (hiếm)
+      ['#f0f9ff', '#a5f3fc', '#67e8f9'], // ice blue (hiếm)
+    ];
+
+    class Rocket {
+      constructor() {
+        this.x = canvas.width * (0.12 + Math.random() * 0.76);
+        this.y = canvas.height + 10;
+        this.targetY = canvas.height * (0.12 + Math.random() * 0.35);
+        this.vy = -(Math.random() * 3 + 8);
+        this.vx = (Math.random() - 0.5) * 1.4;
+        // 85% gold, 15% accent khác
+        const idx = Math.random() < 0.85
+                    ? Math.floor(Math.random() * 5)
+                    : 5 + Math.floor(Math.random() * 2);
+        this.palette  = FW_PALETTES[idx];
+        this.trail    = [];
+        this.exploded = false;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.12; // gravity
+        this.trail.push({ x: this.x, y: this.y, life: 1 });
+        if (this.trail.length > 14) this.trail.shift();
+        this.trail.forEach(t => t.life -= 0.075);
+
+        if (this.y <= this.targetY || this.vy >= -1) {
+          this.exploded = true;
+          this.explode();
+        }
+      }
+      explode() {
+        const [core, body] = this.palette;
+        const count = 75 + Math.floor(Math.random() * 45);
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 5 + 2;
+          particles.push(new BurstParticle(
+            this.x, this.y,
+            Math.cos(angle) * speed,
+            Math.sin(angle) * speed,
+            i % 6 === 0 ? core : body
+          ));
+        }
+        // Twinkle stragglers — bay xa, nhấp nháy
+        for (let i = 0; i < 14; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 7 + 4;
+          const p = new BurstParticle(
+            this.x, this.y,
+            Math.cos(angle) * speed,
+            Math.sin(angle) * speed,
+            core
+          );
+          p.twinkle = true;
+          p.size    = 1.6;
+          p.decay   = 0.006;
+          particles.push(p);
+        }
+      }
+      draw() {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        // Trail
+        for (const t of this.trail) {
+          if (t.life <= 0) continue;
+          ctx.globalAlpha = t.life * 0.7;
+          ctx.fillStyle   = this.palette[1];
+          ctx.shadowBlur  = 12;
+          ctx.shadowColor = this.palette[1];
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        // Đầu rocket
+        ctx.globalAlpha = 1;
+        ctx.fillStyle   = this.palette[0];
+        ctx.shadowBlur  = 18;
+        ctx.shadowColor = this.palette[1];
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 2.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    class BurstParticle {
+      constructor(x, y, vx, vy, color) {
+        this.x = x;  this.y = y;
+        this.vx = vx; this.vy = vy;
+        this.color   = color;
+        this.life    = 1;
+        this.size    = Math.random() * 1.8 + 1.1;
+        this.twinkle = false;
+        this.decay   = 0.008 + Math.random() * 0.008;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.05; // gravity
+        this.vx *= 0.985;
+        this.vy *= 0.985;
+        this.life -= this.decay;
+      }
+      draw() {
+        if (this.life <= 0) return;
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        let alpha = this.life;
+        if (this.twinkle) {
+          alpha *= 0.4 + Math.abs(Math.sin(Date.now() * 0.022 + this.x)) * 0.6;
+        }
+        ctx.globalAlpha = Math.max(0, alpha);
+        ctx.shadowBlur  = 18;
+        ctx.shadowColor = this.color;
+        ctx.fillStyle   = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function animateFireworks() {
+      if (!fireworksRunning) return;
+      // Clear hoàn toàn để background sao luôn nhìn thấy
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      rockets.forEach(r => { r.update(); r.draw(); });
+      rockets = rockets.filter(r => !r.exploded);
+
+      particles.forEach(p => { p.update(); p.draw(); });
+      particles = particles.filter(p => p.life > 0);
+
+      requestAnimationFrame(animateFireworks);
+    }
+
+    function launchRocket() { rockets.push(new Rocket()); }
+
+    function startFireworks() {
+      if (fireworksRunning) return;
+      fireworksRunning = true;
+      animateFireworks();
+      for (let i = 0; i < 3; i++) setTimeout(launchRocket, i * 350);
+      setInterval(() => {
+        launchRocket();
+        if (Math.random() < 0.4) setTimeout(launchRocket, 180);
+      }, 950);
+    }
+
+    /* ============================================================
+       5. SAO VÀNG RƠI XUỐNG LIÊN TỤC
+       ============================================================ */
+    const STAR_EMOJIS = ['⭐', '🌟', '✨', '💫', '⭐', '🌟', '✨'];
+
+    function spawnFallingStar() {
+      const star = document.createElement('div');
+      star.className   = 'falling-star';
+      star.textContent = STAR_EMOJIS[Math.floor(Math.random() * STAR_EMOJIS.length)];
+      star.style.left              = Math.random() * 100 + 'vw';
+      star.style.fontSize          = (Math.random() * 1.8 + 1.2) + 'rem';
+      const duration               = Math.random() * 4 + 5; // 5–9s
+      star.style.animationDuration = duration + 's';
+      successPage.appendChild(star);
+      setTimeout(() => star.remove(), duration * 1000 + 300);
+    }
+
+    function startFallingStars() {
+      for (let i = 0; i < 18; i++) setTimeout(spawnFallingStar, i * 130);
+      setInterval(spawnFallingStar, 280);
+    }
+  </script>
+</body>
+</html>
